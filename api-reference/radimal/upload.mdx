@@ -1,0 +1,111 @@
+---
+title: 'Upload Report'
+openapi: 'POST /upload'
+---
+
+Use the Upload Report endpoint to submit a finalized radiology report after a doctor has reviewed and edited the AI-generated report. This data helps improve our AI model's performance by learning from real-world clinical decisions.
+
+## Endpoint
+
+```http
+POST https://radimal-api.puppilot.co/upload
+```
+
+## Authentication
+
+The endpoint requires Bearer token authentication:
+
+```http
+Authorization: Bearer <api-key>
+```
+
+## Request
+
+### Headers
+
+| Header | Description |
+|--------|-------------|
+| `Authorization` | Bearer token for authentication |
+| `Content-Type` | `application/json` |
+
+### Request Body
+
+```json
+{
+    "doctor_id": "string",  // Required: identifies the doctor submitting the report
+    "report_id": "number",  // Required: must match the report_id used in generate-report endpoint
+    "input": {
+        "created_at": "string",  
+        "patient_breed": "string",
+        "patient_species": "string",
+        "patient_weight": "string",
+        "patient_birthdate": "string",  
+        "patient_neutered": boolean,
+        "patient_gender": "string",
+        "patient_history": "string",
+        "report_text": "string",  // The finalized report text
+        "predictions": [
+            {
+                "probability": "string",
+                "likelihood": "string",  
+                "condition": "string",
+                "source": "string",
+                "thresholds": {
+                    "likely": number,
+                    "possible": number,
+                    "potential": number
+                }
+            }
+        ],
+        "medical_images": [
+            {
+                "view": "string",
+                "predictions": [
+                    {
+                        "condition": "string",
+                        "probability": "string",
+                        "cropped_view": "string",
+                        "thresholds": {
+                            "likely": number,
+                            "possible": number,
+                            "potential": number
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+### Request Fields
+
+| Field | Type | Description | Required |
+|-------|------|-------------|----------|
+| `doctor_id` | string | Unique identifier for the doctor submitting the report | Yes |
+| `report_id` | number | Must match the report_id used in the generate-report endpoint for this report | Yes |
+| `input.report_text` | string | The finalized radiology report text after doctor's review and edits | Yes |
+
+## Response
+
+```json
+{
+    "report_id": 1972342,
+    "status": "created"
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `report_id` | number | The unique identifier of the uploaded report |
+| `status` | string | Status of the upload operation ("created") |
+
+## Notes
+
+- The `report_id` must match the identifier used when generating the report via the generate-report endpoint. This ensures proper tracking and association between the AI-generated report and its finalized version
+- The `doctor_id` must correspond to a valid doctor in the system
+- The `report_text` should contain the final, edited version of the report as approved by the doctor
+- The system uses this data to improve AI model performance and report generation accuracy
+

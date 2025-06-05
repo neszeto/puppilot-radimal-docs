@@ -1,0 +1,76 @@
+---
+title: 'Get Config'
+openapi: 'GET /config/{doctor_id}'
+---
+
+Use the Get Config endpoint to retrieve the normal statements a doctor has set for their report generations.
+
+## Endpoint
+
+```http
+GET https://radimal-api.puppilot.co/config/{doctor_id}
+```
+
+## Authentication
+
+The endpoint requires Bearer token authentication:
+
+```http
+Authorization: Bearer <api-key>
+```
+
+## Request
+
+### Headers
+
+| Header | Description |
+|--------|-------------|
+| `Authorization` | Bearer token for authentication |
+
+### Request Parameters
+
+Simply provide the `doctor_id` in the URL path to retrieve the current configuration.
+
+## Response
+
+```json
+{
+    "include_opening_sentence": true,
+    "conditions": {
+        "ivdd": {
+            "custom_normal": "Example normal for IVDD.",
+            "suppress_normal": true
+        },
+        "gdv": {
+            "custom_normal": "Example normal for GDV",
+            "suppress_normal": false
+        },
+        "mpl": {
+            "custom_normal": "Example normal for MPL."
+        }
+    }
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `include_opening_sentence` | boolean | Whether the opening sentence is included in reports |
+| `conditions` | object | Configuration settings for specific conditions |
+
+#### Condition Configuration Fields
+
+For each condition in the response:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `custom_normal` | string | Custom normal statement used instead of the generated one |
+| `suppress_normal` | boolean | Whether custom normal statements are suppressed for this condition |
+
+## Notes
+
+- The `doctor_id` in the URL path identifies which doctor's configuration to retrieve
+- The configuration affects how reports are generated for this specific doctor
+- Config normal statements override the default generated normal statements
+- If `suppress_normal` is true, the config normal statement will not be used and will instead default to the generated normal statement.

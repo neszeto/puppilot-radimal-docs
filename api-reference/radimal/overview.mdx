@@ -1,0 +1,59 @@
+## Radimal API Overview
+
+### Synopsis
+
+The API takes two key inputs: patient history and AI vision analysis results from radiograph images. Radimal's AI vision system analyzes the radiographs to identify and predict conditions (both normal and abnormal findings) present in the images. Based on these predictions and the patient history, the API generates appropriate report statements for each identified condition. For both abnormal and normal findings, it provides all severity assessments (normal, mild, moderate, or severe) but recommends mild statements to be displayed if the condition is flagged as abnormal and normal statements to be displayed if the condition is flagged as normal. This automated statement generation helps radiologists create comprehensive radiology reports more efficiently while maintaining clinical accuracy.
+
+### Supported Conditions
+
+The API currently supports the following conditions (listed by their unique identifier keys):
+
+```python
+CONDITIONS = [
+  "ivdd",
+  "spondylosis",
+  "hip_dysplasia",
+  "elbow_degeneration",
+  "shoulder_degeneration",
+  "stifle_effusion",
+  "redundant_trachea",
+  "hip_luxation",
+  "mpl",
+  "pneumothorax",
+  "soft_tissue_swelling",
+  "coxofemoral_degeneration",
+  "thoracic_lymph_node",
+  "left_atrial_enlargement",
+  "stifle_degeneration",
+  "pleural_effusion",
+  "megaesophagus",
+  "anomalous_vertebral_bodies",
+  "cardiomegaly",
+  "bronchial_pattern",
+  "interstitial_pattern",
+  "congestive_heart_failure",
+  "nodule_or_mass_respiratory",
+  "bronchopneumonia",
+  "aggressive_bone_lesions"
+]
+```
+### Statement Generation Logic
+
+The API generates statements based on the following rules for each condition mentioned in the predictions:
+
+#### For All Conditions
+The API generates statements for all possible severity levels:
+- Normal
+- Mild
+- Moderate
+- Severe
+
+#### For Abnormal Conditions
+When a condition is assessed as abnormal in the patient, the API generates all severity statements but recommends displaying the mild severity statement.
+
+#### For Normal Conditions
+When a condition is assessed as normal in the patient, the API generates all severity statements but recommends displaying the normal status statement.
+
+#### For Absent Conditions
+When a condition is assessed as absent in the patient, no statements are generated.
+

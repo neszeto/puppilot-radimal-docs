@@ -1,0 +1,77 @@
+---
+title: 'Generate Report'
+openapi: 'POST /generate-report'
+---
+
+
+The Generate Report endpoint is the main API endpoint used for generating AI-powered radiology report statements based on patient history and AI vision analysis results.
+
+## Endpoint
+
+```http
+POST https://radimal-api.puppilot.co/generate-report-v2
+```
+
+## Authentication
+
+The endpoint requires Bearer token authentication:
+
+```http
+Authorization: Bearer <api-key>
+```
+
+## Request
+
+### Headers
+
+| Header | Description |
+|--------|-------------|
+| `Authorization` | Bearer token for authentication |
+| `Content-Type` | `application/json` |
+
+### Request Body
+
+```json
+{
+    "doctor_id": "string",  // Optional: specifies config to use
+    "report_id": "string"  // Required: unique identification for this report
+    "input": {
+        "created_at": "string",
+        "patient_species": "string",
+        "patient_weight": "number",
+        // ... other patient history and prediction fields
+    }
+}
+```
+
+## Response
+
+The response will be a JSON object containing the generated report components and a combined report.
+
+### Response Body
+
+```json
+{
+    "components": {
+        "condition_name": {
+            "normal": "string",  
+            "mild": "string",   
+            "moderate": "string", 
+            "severe": "string",
+            "recommended": "normal"  //or "mild" if condition is not assessed as "unlikely"   
+        }
+    },
+    "combined_report": "string"  // Combined report using recommended normal or mild severity statements
+}
+```
+
+
+## Notes
+
+- The `doctor_id` field is optional and specifies which configuration to use for report generation
+- The `report_id` field is required and is used to uniquely identify this report.
+- For each condition in the predictions:
+  - If normal: recommends the normal statement
+  - If abnormal: recommends the mild statement
+  - If absent: no statements are generated
+- The `combined_report` uses the recommended statements to create a complete report.

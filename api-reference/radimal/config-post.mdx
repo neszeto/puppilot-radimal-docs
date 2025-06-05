@@ -1,0 +1,105 @@
+---
+title: 'Update Config'
+openapi: 'POST /config/{doctor_id}'
+---
+
+Use the Update Config endpoint to set or change the normal statements a doctor prefers when generating reports.
+
+## Endpoint
+
+```http
+POST https://radimal-api.puppilot.co/config/{doctor_id}
+```
+
+## Authentication
+
+The endpoint requires Bearer token authentication:
+
+```http
+Authorization: Bearer <api-key>
+```
+
+## Request
+
+### Headers
+
+| Header | Description |
+|--------|-------------|
+| `Authorization` | Bearer token for authentication |
+| `Content-Type` | `application/json` |
+
+### Request Body
+
+```json
+{
+    "include_opening_sentence": true,
+    "conditions": {
+        "ivdd": {
+            "custom_normal": "Example normal for IVDD.",
+            "suppress_normal": true
+        },
+        "gdv": {
+            "custom_normal": "Example normal for GDV",
+            "suppress_normal": false
+        },
+        "mpl": {
+            "custom_normal": "Example normal for MPL."
+        }
+    }
+}
+```
+
+### Request Fields
+
+| Field | Type | Description | Default |
+|-------|------|-------------|---------|
+| `include_opening_sentence` | boolean | Whether to include the opening sentence in the report | true |
+| `conditions` | object | Configuration settings for specific conditions | {} |
+
+#### Condition Configuration
+
+For each condition, you can specify:
+
+| Field | Type | Description | Default |
+|-------|------|-------------|---------|
+| `custom_normal` | string | Custom normal statement to use instead of the generated one | null |
+| `suppress_normal` | boolean | Whether to suppress the custom normal statement for this condition | false |
+
+## Response
+
+```json
+{
+    "message": "Configuration updated successfully",
+    "config": {
+        "include_opening_sentence": true,
+        "conditions": {
+            "ivdd": {
+                "custom_normal": "Example normal for IVDD.",
+                "suppress_normal": true
+            },
+            "gdv": {
+                "custom_normal": "Example normal for GDV",
+                "suppress_normal": false
+            },
+            "mpl": {
+                "custom_normal": "Example normal for MPL."
+            }
+        }
+    }
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `message` | string | Success message indicating the configuration was updated |
+| `config` | object | The updated configuration object |
+
+## Notes
+
+- The `doctor_id` in the URL path identifies which doctor's configuration to update
+- **POST requests create a new configuration if one doesn't exist, or update the existing one**
+- The `include_opening_sentence` setting affects all reports generated for this doctor
+- Config normal statements should be clinically accurate and follow standard radiology reporting conventions
+- If `suppress_normal` is true, the config normal statement will not be used and will instead default to the generated normal statement.
